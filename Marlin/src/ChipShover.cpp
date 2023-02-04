@@ -885,7 +885,7 @@ void chipshover_tick()
             if (CS_STATUS & CS_STAT_ESTOP) {
                 update_UI_status_msg("ESTOP: RELEASE ESTOP\n", true, ILI9341_RED);
                 while (!digitalRead(ESTOP_SW_PIN)) {
-                    watchdog_refresh();
+                    hal.watchdog_refresh();
                 }
                 REINIT_STEPPERS = true;
                 LCD_clear_line(0);
@@ -902,7 +902,7 @@ void chipshover_tick()
                 update_UI_status_msg("24V FUSE BLOWN", true, ILI9341_RED);
                 //stop from dying
                 while (!digitalRead(FUSE_24V_PIN)) {
-                    watchdog_refresh();
+                    hal.watchdog_refresh();
                 }
             }
 
