@@ -23,6 +23,10 @@
 
 #include "inc/MarlinConfig.h"
 
+#if MB(CHIPSHOVER)
+  #include "ChipShover.h"
+#endif
+
 #ifdef DEBUG_GCODE_PARSER
   #include "gcode/parser.h"
 #endif

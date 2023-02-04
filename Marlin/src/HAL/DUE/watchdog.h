@@ -30,4 +30,8 @@ void watchdog_init();
 
 // Reset watchdog. MUST be called at least every 4 seconds after the
 // first watchdog_init or AVR will go into emergency procedures.
+#if MB(CHIPSHOVER)
+void HAL_watchdog_refresh();
+#else
 inline void HAL_watchdog_refresh() { watchdogReset(); }
+#endif

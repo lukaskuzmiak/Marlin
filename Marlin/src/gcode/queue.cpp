@@ -55,6 +55,10 @@ GCodeQueue queue;
   #include "../feature/repeat.h"
 #endif
 
+#if MB(CHIPSHOVER)
+extern uint8_t CS_STATUS;
+#endif
+
 /**
  * GCode line number handling. Hosts may opt to include line numbers when
  * sending commands to Marlin, and lines will be checked for sequentiality.
@@ -633,7 +637,14 @@ void GCodeQueue::advance() {
   if (process_injected_command_P() || process_injected_command()) return;
 
   // Return if the G-code buffer is empty
+#if MB(CHIPSHOVER)
+  if (!length) {
+    CS_STATUS &= ~0x01;
+    return;
+  }
+#else
   if (!length) return;
+#endif
 
   #if ENABLED(SDSUPPORT)
 
@@ -669,6 +680,9 @@ void GCodeQueue::advance() {
 
   #else
 
+#if MB(CHIPSHOVER)
+    CS_STATUS |= 0x01;
+#endif
     gcode.process_next_command();
 
   #endif // SDSUPPORT

@@ -129,6 +129,10 @@
   #include "./servo.h"
 #endif
 
+#if MB(CHIPSHOVER)
+#include "../ChipShover.h"
+#endif
+
 #if ANY(HEATER_0_USES_THERMISTOR, HEATER_1_USES_THERMISTOR, HEATER_2_USES_THERMISTOR, HEATER_3_USES_THERMISTOR, \
         HEATER_4_USES_THERMISTOR, HEATER_5_USES_THERMISTOR, HEATER_6_USES_THERMISTOR, HEATER_7_USES_THERMISTOR )
   #define HAS_HOTEND_THERMISTOR 1
@@ -2780,7 +2784,14 @@ void Temperature::tick() {
   // Update lcd buttons 488 times per second
   //
   static bool do_buttons;
+#if MB(CHIPSHOVER)
+  if ((do_buttons ^= true))  {
+    ui.update_buttons();
+    chipshover_tick();
+  }
+#else
   if ((do_buttons ^= true)) ui.update_buttons();
+#endif
 
   /**
    * One sensor is sampled on every other call of the ISR.

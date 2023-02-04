@@ -583,7 +583,11 @@ enum StealthIndex : uint8_t { STEALTH_AXIS_XY, STEALTH_AXIS_Z, STEALTH_AXIS_E };
     st.microsteps(microsteps);
     TERN_(SQUARE_WAVE_STEPPING, st.dedge(true));
     st.intpol(interpolate);
+#if MB(CHIPSHOVER)
+    st.diss2g(false); //Don't disable this please as it makes drivers explode
+#else
     st.diss2g(true); // Disable short to ground protection. Too many false readings?
+#endif
     TERN_(TMC_DEBUG, st.rdsel(0b01));
   }
 #endif // TMC2660

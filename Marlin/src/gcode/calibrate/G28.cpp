@@ -65,6 +65,10 @@
 #define DEBUG_OUT ENABLED(DEBUG_LEVELING_FEATURE)
 #include "../../core/debug_out.h"
 
+#if MB(CHIPSHOVER)
+extern uint8_t CS_STATUS;
+#endif
+
 #if ENABLED(QUICK_HOME)
 
   static void quick_home_xy() {
@@ -320,6 +324,11 @@ void GcodeSuite::G28() {
                home_all = homeX == homeY && homeX == homeZ, // All or None
                doX = home_all || homeX, doY = home_all || homeY, doZ = home_all || homeZ;
 
+#if MB(CHIPSHOVER)
+    if ((!needX || doX) && (!needY || doY) && (!axes_should_home(_BV(Z_AXIS)) || doZ)) {
+        CS_STATUS = 0x01; //busy, homed
+    }
+#endif
     #if ENABLED(HOME_Z_FIRST)
 
       if (doZ) homeaxis(Z_AXIS);

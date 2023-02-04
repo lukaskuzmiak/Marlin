@@ -171,3 +171,8 @@ char *dtostrf(double __val, signed char __width, unsigned char __prec, char *__s
 #ifdef __cplusplus
   }
 #endif
+
+#if MB(CHIPSHOVER)
+#define PLATFORM_M997_SUPPORT
+void flashFirmware(const int16_t);
+#endif

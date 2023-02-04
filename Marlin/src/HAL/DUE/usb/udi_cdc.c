@@ -76,6 +76,10 @@
 #  define UDI_CDC_TX_EMPTY_NOTIFY(port)
 #endif
 
+#if MB(CHIPSHOVER)
+uint32_t usb_conn_active = 0;
+#endif
+
 /**
  * \ingroup udi_cdc_group
  * \defgroup udi_cdc_group_udc Interface with USB Device Core (UDC)
@@ -654,6 +658,10 @@ static void udi_cdc_data_received(udd_ep_status_t status, iram_size_t n, udd_ep_
 		// Abort reception
 		return;
 	}
+#if MB(CHIPSHOVER)
+    if (usb_conn_active < 10)
+        usb_conn_active=10;
+#endif
 	buf_sel_trans = (udi_cdc_rx_buf_sel[port]==0)?1:0;
 	if (!n) {
 		udd_ep_run( ep,
@@ -690,6 +698,10 @@ static void udi_cdc_data_sent(udd_ep_status_t status, iram_size_t n, udd_ep_id_t
 		// Abort transfer
 		return;
 	}
+#if MB(CHIPSHOVER)
+    if (usb_conn_active < 10)
+        usb_conn_active=10;
+#endif
 	udi_cdc_tx_buf_nb[port][(udi_cdc_tx_buf_sel[port]==0)?1:0] = 0;
 	udi_cdc_tx_both_buf_to_send[port] = false;
 	udi_cdc_tx_trans_ongoing[port] = false;

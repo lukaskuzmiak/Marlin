@@ -1339,6 +1339,10 @@ void setup() {
 
   marlin_state = MF_RUNNING;
 
+#if MB(CHIPSHOVER)
+  chipshover_setup();
+#endif
+
   SETUP_LOG("setup() completed.");
 }
 
@@ -1363,6 +1367,10 @@ void loop() {
       if (card.flag.abort_sd_printing) abortSDPrinting();
       if (marlin_state == MF_SD_COMPLETE) finishSDPrinting();
     #endif
+
+#if MB(CHIPSHOVER)
+    chipshover_loop();
+#endif
 
     queue.advance();
 
