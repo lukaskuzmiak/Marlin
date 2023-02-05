@@ -290,6 +290,20 @@ void display_temp()
     }
 }
 
+void display_fan_rpm() {
+    static uint16_t old_fan_rpm;
+    if (UI_update) {
+        uint16_t fan_rpm = fan_check.get_fan_rpm(0);
+        if (abs(old_fan_rpm - fan_rpm) > 50) {
+            LCD_clear_line(10); // FIXME: this conflicts with print_build_info()
+            tft.print("FAN: ");
+            tft.print(fan_rpm);
+            tft.print("rpm");
+            old_fan_rpm = fan_rpm;
+        }
+    }
+}
+
 void update_xyz(float x, float y, float z) {
   if (UI_update) {
     if (STORED_X != x) {

@@ -57,3 +57,7 @@
 #endif
 
 #include "../core/multi_language.h"
+
+#if MB(CHIPSHOVER)
+  #include "../ChipShover.h"
+#endif

@@ -167,7 +167,9 @@ void FanCheck::report_speed_error(uint8_t fan) {
     }
   }
   else if (!printingIsPaused()) {
+    #if HAS_HOTEND
     thermalManager.setTargetHotend(0, fan); // Always disable heating
+    #endif
     if (error == TachoError::NONE) error = TachoError::REPORTED;
   }
 
@@ -197,6 +199,10 @@ void FanCheck::print_fan_states() {
     }
   }
   SERIAL_EOL();
+}
+
+uint16_t FanCheck::get_fan_rpm(uint8_t fan) {
+  return 60 * rps[fan];
 }
 
 #if ENABLED(AUTO_REPORT_FANS)

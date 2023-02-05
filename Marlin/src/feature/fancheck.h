@@ -82,6 +82,8 @@ class FanCheck {
       struct AutoReportFan { static void report(); };
       static AutoReporter<AutoReportFan> auto_reporter;
     #endif
+
+    static uint16_t get_fan_rpm(uint8_t fan);
 };
 
 extern FanCheck fan_check;
