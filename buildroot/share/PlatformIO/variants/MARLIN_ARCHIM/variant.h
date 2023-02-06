@@ -55,7 +55,11 @@ extern "C"{
  *----------------------------------------------------------------------------*/
 
 // Number of pins defined in PinDescription array
+#ifdef DUE_CHIPSHOVER
 #define PINS_COUNT           (109U)
+#else
+#define PINS_COUNT           (79U)
+#endif
 #define NUM_DIGITAL_PINS     66
 #define NUM_ANALOG_INPUTS    12
 #define analogInputToDigitalPin(p)  ((p < 12) ? (p) + 54 : -1)
@@ -223,7 +227,11 @@ static const uint8_t CAN1TX = 89;
  */
 #define PWM_INTERFACE		PWM
 #define PWM_INTERFACE_ID	ID_PWM
+#ifdef DUE_CHIPSHOVER
+#define PWM_FREQUENCY		1000
+#else
 #define PWM_FREQUENCY		31000
+#endif
 #define PWM_MAX_DUTY_CYCLE	255
 #define PWM_MIN_DUTY_CYCLE	0
 #define PWM_RESOLUTION		8
@@ -233,7 +241,11 @@ static const uint8_t CAN1TX = 89;
  */
 #define TC_INTERFACE        TC0
 #define TC_INTERFACE_ID     ID_TC0
+#ifdef DUE_CHIPSHOVER
+#define TC_FREQUENCY        1000
+#else
 #define TC_FREQUENCY        100000
+#endif
 #define TC_MAX_DUTY_CYCLE   255
 #define TC_MIN_DUTY_CYCLE   0
 #define TC_RESOLUTION		8
