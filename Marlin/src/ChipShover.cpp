@@ -422,8 +422,8 @@ bool JS_MOVE_ZM = false;
 void handle_js()
 {
     if (UI_update && JOG_EN) {
-        JS_MOVE_LEFT = digitalRead(JS_PIN_XP); //Left
-        JS_MOVE_RIGHT = digitalRead(JS_PIN_XN); //Right
+        JS_MOVE_LEFT = digitalRead(JS_PIN_XN); //Left
+        JS_MOVE_RIGHT = digitalRead(JS_PIN_XP); //Right
         JS_MOVE_DOWN = digitalRead(JS_PIN_YP); //Down
         JS_MOVE_UP = digitalRead(JS_PIN_YN); //Up
 
