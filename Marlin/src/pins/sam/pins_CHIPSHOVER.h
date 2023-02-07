@@ -110,7 +110,7 @@
   #endif
 #endif
 
-#define FAN_PIN                              5 /* PC25 */
+#define CONTROLLER_FAN_PIN                   5 /* PC25 */
 #define FAN_ON                               4 /* PC26 */
 #define E0_FAN_TACHO_PIN                     61 /* PA2 */
 

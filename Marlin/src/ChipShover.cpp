@@ -791,9 +791,6 @@ void chipshover_loop()
         REQ_BUTTON_HOME = false;
     }
 
-    if (!UI_update) {
-        queue.enqueue_one_now("M106 S 150"); //set fan speed to 150/255
-    }
     UI_update = true;
 }
 
