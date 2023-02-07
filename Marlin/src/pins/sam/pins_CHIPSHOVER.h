@@ -56,10 +56,8 @@
 #define X_MAX_PIN  X_ES2
 #define Y_MIN_PIN  Y_ES1
 #define Y_MAX_PIN  Y_ES2
-
-/* We switch Z-Min & Z-Max, as 'home' is the max position */
-#define Z_MIN_PIN  Z_ES2
-#define Z_MAX_PIN  Z_ES1
+#define Z_MIN_PIN  Z_ES1
+#define Z_MAX_PIN  Z_ES2
 
 
 //
