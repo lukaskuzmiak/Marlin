@@ -84,15 +84,6 @@
   #define Z_CS_PIN                           11  /* PD7 */
 #endif
 
-/* Board does't have E0 in real life - required for build to succeed.
-   PC0 is not used (erase jumper).
- */
-#define E0_STEP_PIN                          110  /* PC0 */
-#define E0_DIR_PIN                           110  /* PC0  */
-#define E0_ENABLE_PIN                        110  /* PC0 */
-#ifndef E0_CS_PIN
-  #define E0_CS_PIN                          110  /* PC0 */
-#endif
 
 //
 // Software SPI pins for TMC2660 stepper drivers.
@@ -110,17 +101,17 @@
   #endif
 #endif
 
-#define CONTROLLER_FAN_PIN                   5 /* PC25 */
-#define FAN_ON                               4 /* PC26 */
-#define E0_FAN_TACHO_PIN                     61 /* PA2 */
-
 
 //
 // Misc. Functions
 //
 
-// LCD SCK
+/* Fan */
+#define CONTROLLER_FAN_PIN                   5 /* PC25 */
+#define FAN_ON                               4 /* PC26 */
+#define E0_FAN_TACHO_PIN                     61 /* PA2 */
 
+/* LCD SCK */
 #define SCK_PIN         76   /* PA27 */
 #define MISO_PIN        74   /* PA25 */
 #define MOSI_PIN        75   /* PA26 */
@@ -130,7 +121,6 @@
 #define LCD_MISO_PIN   MISO_PIN
 #define LCD_MOSI_PIN   MOSI_PIN
 #define LCD_SDSS       SDSS
-
 
 /* LEDs on the board */
 #define LED_ESTOP_PIN   62 /* PB17 */
@@ -156,7 +146,3 @@
 
 //#define PIN_WIRE_SDA 70 /* PA17 */
 //#define PIN_WIRE_SCL 71 /* PA18 */
-
-#define BOARD_INIT()
-
-#define TEMP_0_PIN 0
