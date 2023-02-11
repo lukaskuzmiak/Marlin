@@ -11,6 +11,10 @@
   #define HAS_E0_FAN_TACHO 1
 #endif
 
+#define TEMP_SENSOR_ADDR_X 0b1001011
+#define TEMP_SENSOR_ADDR_Y 0b1001010
+#define TEMP_SENSOR_ADDR_Z 0b1001001
+
 void chipshover_tick();
 void chipshover_loop();
 void chipshover_setup();

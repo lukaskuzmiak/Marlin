@@ -41,7 +41,7 @@
   #include "feature/tmc_util.h"
 #endif
 
-#include "libs/lm75bdp.h"
+#include "feature/chipshover/cs_temperature.h"
 
 
 bool UI_update = false;
@@ -89,10 +89,6 @@ bool REQ_STEPPER_INIT = false;
 #define JOG_FAST_SW_PIN 67
 
 float STEPPER_STEP_SZ = STEPPER_STEP_L_MM;
-
-#define TEMP_SENSOR_ADDR_X 0b1001011
-#define TEMP_SENSOR_ADDR_Y 0b1001010
-#define TEMP_SENSOR_ADDR_Z 0b1001001
 
 Adafruit_ILI9341 tft = Adafruit_ILI9341(77, 73, 87);
 
@@ -159,8 +155,8 @@ void chipshover_setup()
     encoder_value enc_val = {.A = A, .B = B};
     enc_last = enc_val;
 
-    // Initialize LM75BDP temperature sensors
-    lm75bdp.init();
+    // Initialize ChipShover temperature sensors
+    cs_temperature.init();
     #define I2C_LED_PIN 60
     pinMode(I2C_LED_PIN, OUTPUT);
     digitalWrite(I2C_LED_PIN, 1);
@@ -201,37 +197,31 @@ void display_temp()
 {
     static int16_t old_x, old_y, old_z;
     if (UI_update) {
-        int16_t x_raw, y_raw, z_raw = SHRT_MIN;
-
-        // Read raw values from the sensors, these are 8 times higher than real temp in C
-        bool x_read = lm75bdp.readRaw(TEMP_SENSOR_ADDR_X, &x_raw);
-        bool y_read = lm75bdp.readRaw(TEMP_SENSOR_ADDR_Y, &y_raw);
-        bool z_read = lm75bdp.readRaw(TEMP_SENSOR_ADDR_Z, &z_raw);
-
-        // update the display if any axis temperature differs by more than 2 in raw value (2/8 (0.25C))
-        if (abs(old_x - x_raw) > 2 || abs(old_y - y_raw) > 2 || abs(old_z - z_raw) > 2) {
+        // update the display if any axis temperature differs at least 4 in raw value (4/8 (0.5C))
+        if (abs(old_x - cs_temperature.x_raw_temp) >= 4 || abs(old_y - cs_temperature.y_raw_temp) >= 4 ||
+                abs(old_z - cs_temperature.z_raw_temp) >= 4) {
             LCD_clear_line(9);
             tft.print("X: ");
-            if (x_read)
-              tft.print(lm75bdp.temperature(x_raw));
+            if (cs_temperature.x_temp_valid)
+              tft.print(cs_temperature.temperature(cs_temperature.x_raw_temp));
             else
               tft.print("ERR");
 
             tft.print(" Y: ");
-            if (y_read)
-              tft.print(lm75bdp.temperature(y_raw));
+            if (cs_temperature.y_temp_valid)
+              tft.print(cs_temperature.temperature(cs_temperature.y_raw_temp));
             else
               tft.print("ERR");
 
             tft.print(" Z: ");
-            if (z_read)
-              tft.print(lm75bdp.temperature(z_raw));
+            if (cs_temperature.z_temp_valid)
+              tft.print(cs_temperature.temperature(cs_temperature.z_raw_temp));
             else
               tft.print("ERR");
 
-            old_x = x_raw;
-            old_y = y_raw;
-            old_z = z_raw;
+            old_x = cs_temperature.x_raw_temp;
+            old_y = cs_temperature.y_raw_temp;
+            old_z = cs_temperature.z_raw_temp;
         }
     }
 }

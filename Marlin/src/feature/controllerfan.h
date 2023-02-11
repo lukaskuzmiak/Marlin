@@ -53,6 +53,7 @@ class ControllerFan {
   private:
     static uint8_t speed;
     static void set_fan_speed(const uint8_t s);
+    static uint8_t derive_fan_speed();
 
   public:
     #if ENABLED(CONTROLLER_FAN_EDITABLE)

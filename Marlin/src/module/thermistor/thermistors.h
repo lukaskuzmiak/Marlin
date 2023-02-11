@@ -524,7 +524,11 @@ static_assert(255 > TEMPTABLE_0_LEN || 255 > TEMPTABLE_1_LEN || 255 > TEMPTABLE_
   #endif
 #endif
 #ifndef TEMP_SENSOR_BOARD_RAW_HI_TEMP
-  #if TT_REVRAW(BOARD)
+  #if TEMP_SENSOR_BOARD_IS_CHIPSHOVER
+    // this is multiplied by 8 because the RAW values are 8 times the temp in celsius for LM75BDP
+    #define TEMP_SENSOR_BOARD_RAW_HI_TEMP (BOARD_MAXTEMP * 8)
+    #define TEMP_SENSOR_BOARD_RAW_LO_TEMP (BOARD_MINTEMP * 8)
+  #elif TT_REVRAW(BOARD)
     #define TEMP_SENSOR_BOARD_RAW_HI_TEMP MAX_RAW_THERMISTOR_VALUE
     #define TEMP_SENSOR_BOARD_RAW_LO_TEMP 0
   #else

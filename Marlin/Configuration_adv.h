@@ -547,11 +547,15 @@
   #define CONTROLLERFAN_IDLE_TIME       120 // (seconds) Extra time to keep the fan running after disabling motors
 
   // Use TEMP_SENSOR_BOARD as a trigger for enabling the controller fan
-  //#define CONTROLLER_FAN_MIN_BOARD_TEMP 40  // (°C) Turn on the fan if the board reaches this temperature
+  #define CONTROLLER_FAN_MIN_BOARD_TEMP 40  // (°C) Turn on the fan (MIN RPM) if the board reaches this temperature
+  #define CONTROLLER_FAN_MAX_BOARD_TEMP 65  // (°C) Fan on MAX RPM if board reaches this temperature
 
-  #define CONTROLLER_FAN_EDITABLE         // Enable M710 configurable settings
-  #if ENABLED(CONTROLLER_FAN_EDITABLE)
-    #define CONTROLLER_FAN_MENU             // Enable the Controller Fan submenu
+  // If automatic fan control based on temperature is not active, allow editing fan speeds
+  #if !defined(CONTROLLER_FAN_MIN_BOARD_TEMP) || !defined (CONTROLLER_FAN_MAX_BOARD_TEMP)
+    #define CONTROLLER_FAN_EDITABLE         // Enable M710 configurable settings
+    #if ENABLED(CONTROLLER_FAN_EDITABLE)
+      #define CONTROLLER_FAN_MENU             // Enable the Controller Fan submenu
+    #endif
   #endif
 #endif
 

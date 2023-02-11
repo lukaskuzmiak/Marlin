@@ -50,12 +50,32 @@ void ControllerFan::set_fan_speed(const uint8_t s) {
   speed = s < (CONTROLLERFAN_SPEED_MIN) ? 0 : s; // Fan OFF below minimum
 }
 
+#if HAS_CONTROLLER_FAN_MIN_BOARD_TEMP && HAS_CONTROLLER_FAN_MAX_BOARD_TEMP
+uint8_t ControllerFan::derive_fan_speed() {
+  celsius_t board_temp = thermalManager.wholeDegBoard();
+
+  if (board_temp < CONTROLLER_FAN_MIN_BOARD_TEMP)
+    return 0; // no need for a fan, we are below minimum cooling board temp
+
+  if (board_temp > CONTROLLER_FAN_MAX_BOARD_TEMP)
+    return 255; // we are way too high in temp, max fan
+
+  // otherwise map the actual temperature linearly from 1 to 255 fan speed
+  return map(board_temp, CONTROLLER_FAN_MIN_BOARD_TEMP, CONTROLLER_FAN_MAX_BOARD_TEMP, 1, 254);
+}
+#endif
+
 void ControllerFan::update() {
-  static millis_t lastMotorOn = 0,    // Last time a motor was turned on
-                  nextMotorCheck = 0; // Last time the state was checked
+  static millis_t nextMotorCheck = 0; // Last time the state was checked
   const millis_t ms = millis();
   if (ELAPSED(ms, nextMotorCheck)) {
     nextMotorCheck = ms + 2500UL; // Not a time critical function, so only check every 2.5s
+
+    // Try to calculate speed automatically, if is is not supported, set it according to default values for active/idle
+    #if HAS_CONTROLLER_FAN_MIN_BOARD_TEMP && HAS_CONTROLLER_FAN_MAX_BOARD_TEMP
+      set_fan_speed(derive_fan_speed());
+    #else
+    static millis_t lastMotorOn = 0;    // Last time a motor was turned on
 
     // If any triggers for the controller fan are true...
     //   - At least one stepper driver is enabled
@@ -74,6 +94,7 @@ void ControllerFan::update() {
       settings.auto_mode && lastMotorOn && PENDING(ms, lastMotorOn + SEC_TO_MS(settings.duration))
       ? settings.active_speed : settings.idle_speed
     );
+    #endif
 
     speed = CALC_FAN_SPEED(speed);
 

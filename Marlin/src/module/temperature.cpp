@@ -200,6 +200,10 @@
   #include "../ChipShover.h"
 #endif
 
+#if TEMP_SENSOR_BOARD_IS_CHIPSHOVER
+  #include "../feature/chipshover/cs_temperature.h"
+#endif
+
 #if ANY(TEMP_SENSOR_0_IS_THERMISTOR, TEMP_SENSOR_1_IS_THERMISTOR, TEMP_SENSOR_2_IS_THERMISTOR, TEMP_SENSOR_3_IS_THERMISTOR, \
         TEMP_SENSOR_4_IS_THERMISTOR, TEMP_SENSOR_5_IS_THERMISTOR, TEMP_SENSOR_6_IS_THERMISTOR, TEMP_SENSOR_7_IS_THERMISTOR )
   #define HAS_HOTEND_THERMISTOR 1
@@ -2303,6 +2307,8 @@ void Temperature::task() {
       return TEMP_AD595(raw);
     #elif TEMP_SENSOR_BOARD_IS_AD8495
       return TEMP_AD8495(raw);
+    #elif TEMP_SENSOR_BOARD_IS_CHIPSHOVER
+      return cs_temperature.temperature(raw);
     #else
       UNUSED(raw);
       return 0;
@@ -2361,6 +2367,9 @@ void Temperature::updateTemperaturesFromRawValues() {
   #endif
   #if TEMP_SENSOR_IS_MAX_TC(REDUNDANT)
     temp_redundant.setraw(READ_MAX_TC(HEATER_ID(TEMP_SENSOR_REDUNDANT_SOURCE)));
+  #endif
+  #if TEMP_SENSOR_BOARD_IS_CHIPSHOVER
+    temp_board.setraw(cs_temperature.readRaw());
   #endif
 
   #if HAS_HOTEND
