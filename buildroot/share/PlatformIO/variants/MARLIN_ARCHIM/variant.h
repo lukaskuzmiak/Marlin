@@ -228,7 +228,7 @@ static const uint8_t CAN1TX = 89;
 #define PWM_INTERFACE		PWM
 #define PWM_INTERFACE_ID	ID_PWM
 #ifdef DUE_CHIPSHOVER
-#define PWM_FREQUENCY		1000
+#define PWM_FREQUENCY		25000
 #else
 #define PWM_FREQUENCY		31000
 #endif
@@ -242,7 +242,12 @@ static const uint8_t CAN1TX = 89;
 #define TC_INTERFACE        TC0
 #define TC_INTERFACE_ID     ID_TC0
 #ifdef DUE_CHIPSHOVER
-#define TC_FREQUENCY        1000
+/*
+ * Chipshover HW rev3 - this controls FAN PWM
+ * 1kHz is very loud, 25kHz is beyond audible spectrum, sounds nicer
+ * Adjustment with FAN_MIN_PWM needed - see Configuration_adv.h
+ */
+#define TC_FREQUENCY        25000
 #else
 #define TC_FREQUENCY        100000
 #endif

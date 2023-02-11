@@ -542,7 +542,7 @@
   //#define CONTROLLER_FAN_USE_Z_ONLY       // With this option only the Z axis is considered
   //#define CONTROLLER_FAN_IGNORE_Z         // Ignore Z stepper. Useful when stepper timeout is disabled.
   #define CONTROLLERFAN_SPEED_MIN         0 // (0-255) Minimum speed. (If set below this value the fan is turned off.)
-  #define CONTROLLERFAN_SPEED_ACTIVE    150 // (0-255) Active speed, used when any motor is enabled
+  #define CONTROLLERFAN_SPEED_ACTIVE     64 // (0-255) Active speed, used when any motor is enabled
   #define CONTROLLERFAN_SPEED_IDLE        0 // (0-255) Idle speed, used when motors are disabled
   #define CONTROLLERFAN_IDLE_TIME       120 // (seconds) Extra time to keep the fan running after disabling motors
 
@@ -579,8 +579,14 @@
  *
  * Define one or both of these to override the default 0-255 range.
  */
-//#define FAN_MIN_PWM 50
-//#define FAN_MAX_PWM 128
+#define FAN_MIN_PWM 40
+/**
+ * ChipShover: due to higher PWM frequency the min value is set to 40.
+ * That is about the value where the fan (FFB0424VHN) start spinning
+ * with 25kHz PWM with ChipShover HW rev3.
+ * Adjust as needed for different frequency PWM.
+ */
+#define FAN_MAX_PWM 255
 
 /**
  * Fan Fast PWM

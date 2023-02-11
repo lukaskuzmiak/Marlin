@@ -77,6 +77,11 @@ void ControllerFan::update() {
 
     speed = CALC_FAN_SPEED(speed);
 
+    // Invert the signal as ChipShover HW (rev3) requires it
+    #if MB(CHIPSHOVER)
+    speed = 255 - speed;
+    #endif
+
     #if FAN_KICKSTART_TIME
       static millis_t fan_kick_end = 0;
       if (speed > FAN_OFF_PWM) {

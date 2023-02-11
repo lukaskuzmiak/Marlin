@@ -1116,20 +1116,10 @@
   #define FAN_KICKSTART_POWER 180
 #endif
 
-/*
- * TODO: FAN_MIN_PWM, FAN_MAX_PWM, FAN_OFF_PWM can be defined in Conditionals_post.h which is imported AFTER this file
- * Therefore FAN_MIN_PWM, FAN_MAX_PWM, FAN_OFF_PWM are potentially undefined (if not configured)
- * and it will always fall into the last case if they were unconfigured
- * Opened a bug with MarlinFirmware: https://github.com/MarlinFirmware/Marlin/issues/25347
- */ 
-#if MB(CHIPSHOVER)
-#define CALC_FAN_SPEED(f) (255 - (f ?: FAN_OFF_PWM))
-#else
 #if FAN_MIN_PWM == 0 && FAN_MAX_PWM == 255
   #define CALC_FAN_SPEED(f) (f ?: FAN_OFF_PWM)
 #else
   #define CALC_FAN_SPEED(f) (f ? map(f, 1, 255, FAN_MIN_PWM, FAN_MAX_PWM) : FAN_OFF_PWM)
-#endif
 #endif
 
 // Input shaping
