@@ -1645,9 +1645,9 @@ void setup() {
 
   marlin_state = MF_RUNNING;
 
-#if MB(CHIPSHOVER)
-  chipshover_setup();
-#endif
+  #if MB(CHIPSHOVER)
+    SETUP_RUN(chipshover_setup());
+  #endif
 
   SETUP_LOG("setup() completed.");
 

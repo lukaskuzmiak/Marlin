@@ -13,6 +13,7 @@
   #include <pins_arduino.h>
 #endif
 #include <math.h>
+#include <limits.h>
 
 #include "core/utility.h"
 #include "module/motion.h"
@@ -39,6 +40,9 @@
 #if HAS_TRINAMIC_CONFIG && DISABLED(PSU_DEFAULT_OFF)
   #include "feature/tmc_util.h"
 #endif
+
+#include "libs/lm75bdp.h"
+
 
 bool UI_update = false;
 #include <SPI.h>
@@ -86,6 +90,10 @@ bool REQ_STEPPER_INIT = false;
 
 float STEPPER_STEP_SZ = STEPPER_STEP_L_MM;
 
+#define TEMP_SENSOR_ADDR_X 0b1001011
+#define TEMP_SENSOR_ADDR_Y 0b1001010
+#define TEMP_SENSOR_ADDR_Z 0b1001001
+
 Adafruit_ILI9341 tft = Adafruit_ILI9341(77, 73, 87);
 
 extern GcodeSuite gcode;
@@ -127,9 +135,6 @@ uint8_t CS_STATUS = CS_STAT_UNHOMED;
 uint8_t CS_STATUS_PREV = 255; //should be unknown one
 encoder_value enc_last = {.A = 0, .B = 0};
 
-
-#include <Wire.h>
-
 void chipshover_setup()
 {
     tft.begin();
@@ -153,51 +158,12 @@ void chipshover_setup()
     bool B = digitalRead(ENC_PIN_B);
     encoder_value enc_val = {.A = A, .B = B};
     enc_last = enc_val;
-    Wire1.begin();
+
+    // Initialize LM75BDP temperature sensors
+    lm75bdp.init();
     #define I2C_LED_PIN 60
     pinMode(I2C_LED_PIN, OUTPUT);
     digitalWrite(I2C_LED_PIN, 1);
-    Wire1.setClock(100000);
-
-    // Wire1.beginTransmission(0b01010000);
-    // Wire1.write(0x00);//addr
-    // Wire1.write(0x00);//addr
-    // Wire1.write(0xAA);
-    // Wire1.endTransmission();
-
-    #define TEMP_ADDR_X 0b1001011
-    #define TEMP_ADDR_Y 0b1001010
-    #define TEMP_ADDR_Z 0b1001001
-
-    // Wire1.beginTransmission(TEMPADDR);
-    // Wire1.write(0x00);
-    // Wire1.endTransmission(false);
-    // volatile uint8_t from = Wire1.requestFrom(TEMPADDR, 2);
-    // volatile uint16_t temp = 0;
-    // if (from > 0) {
-    //     temp = Wire1.read() << 8;
-    //     temp |= Wire1.read();
-
-    //     //Wire1.read((uint8_t *)&temp);
-    //     temp >>= 5;
-    // }
-
-
-    //  Wire1.write(byte(0b10011101)); //x
-    //  Wire1.write(byte(0x00));
-    //  Wire1.endTransmission(false);
-    //  //Wire1.write(byte(0b10011100)); //x
-    //  Wire1.requestFrom(byte(0b10011100), byte(1)); //x
-    //  while(!Wire1.available());
-    //  volatile uint16_t temp = (uint8_t)Wire1.read();
-    //  while(!Wire1.available());
-    //  temp |= ((uint8_t)Wire1.read() << 8);
-    //  Wire1.endTransmission();
-    // Wire1.write(0x00);
-    // Wire1.write(0x00);
-    // Wire1.write(0x10);
-    // Wire1.endTransmission();
-
 }
 
 void LCD_clear_line(uint8_t line, uint16_t colour=ILI9341_WHITE)
@@ -230,63 +196,43 @@ void LCD_clear_line(uint8_t line, uint16_t colour=ILI9341_WHITE)
   }
 
 double STORED_X = -101, STORED_Y = -100 , STORED_Z = -100;
-float XTEMP = 0;
-
-float read_temp(uint8_t addr)
-{
-
-    Wire1.beginTransmission(addr);
-    Wire1.write(0x00);
-    Wire1.endTransmission(false);
-    uint8_t from = Wire1.requestFrom(addr, (uint8_t) 2);
-    uint16_t temp = 0;
-    if (from > 0) {
-        temp = Wire1.read() << 8;
-        temp |= Wire1.read();
-
-        //Wire1.read((uint8_t *)&temp);
-        temp >>= 5;
-    }
-    return (float)temp * 0.125f;
-}
 
 void display_temp()
 {
-    static float old_xtemp, old_ytemp, old_ztemp;
-    static int skip_temp;
-    if (UI_update && (skip_temp < 3)) {
-        float xtemp = read_temp(TEMP_ADDR_X);
-        float ytemp = read_temp(TEMP_ADDR_Y);
-        float ztemp = read_temp(TEMP_ADDR_Z);
-        bool update_xtemp = fabs(xtemp - old_xtemp) > 0.5f;
-        bool update_ytemp = fabs(ytemp - old_ytemp) > 0.5f;
-        bool update_ztemp = fabs(ztemp - old_ztemp) > 0.5f;
+    static int16_t old_x, old_y, old_z;
+    if (UI_update) {
+        int16_t x_raw, y_raw, z_raw = SHRT_MIN;
 
-        if ((xtemp == 0) && (ytemp == 0) && (ztemp == 0)) {
-            skip_temp++; //if temps don't read, give up
-        } else {
-            skip_temp = 0;
-        }
+        // Read raw values from the sensors, these are 8 times higher than real temp in C
+        bool x_read = lm75bdp.readRaw(TEMP_SENSOR_ADDR_X, &x_raw);
+        bool y_read = lm75bdp.readRaw(TEMP_SENSOR_ADDR_Y, &y_raw);
+        bool z_read = lm75bdp.readRaw(TEMP_SENSOR_ADDR_Z, &z_raw);
 
-        if (update_xtemp || update_ytemp || update_ztemp) {
+        // update the display if any axis temperature differs by more than 2 in raw value (2/8 (0.25C))
+        if (abs(old_x - x_raw) > 2 || abs(old_y - y_raw) > 2 || abs(old_z - z_raw) > 2) {
             LCD_clear_line(9);
             tft.print("X: ");
-            tft.print(xtemp);
+            if (x_read)
+              tft.print(lm75bdp.temperature(x_raw));
+            else
+              tft.print("ERR");
 
             tft.print(" Y: ");
-            tft.print(ytemp);
+            if (y_read)
+              tft.print(lm75bdp.temperature(y_raw));
+            else
+              tft.print("ERR");
 
             tft.print(" Z: ");
-            tft.print(ztemp);
+            if (z_read)
+              tft.print(lm75bdp.temperature(z_raw));
+            else
+              tft.print("ERR");
 
-            old_xtemp = xtemp;
-            old_ytemp = ytemp;
-            old_ztemp = ztemp;
-        } else if (UI_update && (skip_temp == 3)) {
-            LCD_clear_line(9, ILI9341_RED);
-            tft.print("COULD NOT READ TEMP");
+            old_x = x_raw;
+            old_y = y_raw;
+            old_z = z_raw;
         }
-
     }
 }
 

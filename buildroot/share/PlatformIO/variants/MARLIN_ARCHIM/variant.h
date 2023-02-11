@@ -142,6 +142,19 @@ static const uint8_t SCK  = PIN_SPI_SCK;
 /*
  * Wire Interfaces
  */
+#if DUE_CHIPSHOVER
+#define WIRE_INTERFACES_COUNT 1
+
+#define PIN_WIRE_SDA        (70U)
+#define PIN_WIRE_SCL        (71U)
+#define WIRE_INTERFACE      TWI0
+#define WIRE_INTERFACE_ID   ID_TWI0
+#define WIRE_ISR_HANDLER    TWI0_Handler
+#define WIRE_ISR_ID         TWI0_IRQn
+
+static const uint8_t SDA  = PIN_WIRE_SDA;
+static const uint8_t SCL  = PIN_WIRE_SCL;
+#else
 #define WIRE_INTERFACES_COUNT 2
 
 #define PIN_WIRE_SDA         (20U)
@@ -162,6 +175,7 @@ static const uint8_t SDA  = PIN_WIRE_SDA;
 static const uint8_t SCL  = PIN_WIRE_SCL;
 static const uint8_t SDA1 = PIN_WIRE1_SDA;
 static const uint8_t SCL1 = PIN_WIRE1_SCL;
+#endif
 
 /*
  * UART/USART Interfaces
