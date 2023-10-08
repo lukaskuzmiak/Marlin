@@ -2,13 +2,18 @@
 
 This is a fork of the [original ChipSHOVER-Marlin repo](https://github.com/newaetech/ChipSHOVER-Marlin).
 
+## Description of changes
+
 The ChipShover changes has been merged into latest MarlinFirmware `2.1.x` (**not** `bugfix-2.1.x` as that is not meant for production). It is kept up to date with the upstream Marlin `2.1.x` branch from time to time.
 
 ### Rough list of (more major) changes
  - Inverted Z Axis - 0 is on the top and plunging down is in positive numbers
+   - Utilizes `HOME_Z_FIRST`; Was able to get rid of swapping min/max endstop hack
  - Fix the MAX (far) endstops
  - [Implement LM75BDP library; refactor temp reading using the library](https://github.com/lukaskuzmiak/Marlin/commit/d91c4bf274f243162a59102935fb6047b2c83985)
  - [Automatic fan/temperature control](https://github.com/lukaskuzmiak/Marlin/commit/d11b93ae43e9752dd205e43d8e9df529a4f82c32)
+   - Higher PWM for fan (less noisy)
+   - Automatically read temps of all 3 drivers and uses highest to adjust fan speed based on temp (MUCH quieter)
  - Bunch of refactoring to fit into Marlin 2.1 - makes it kind of difficult to compare it back original NewAE patches :/
 
 ### Known issues
@@ -25,6 +30,24 @@ The ChipShover changes has been merged into latest MarlinFirmware `2.1.x` (**not
    - Ideally it can be a child class of the actual display class?
    - Put it in e.g., Marlin/src/feature/chipshover/cs_tft.[cpp,h]
  - The X/Y/Z positioners feature an optical endstop as well for more precise homing - let's see if it can be utilized
+
+## Building, Uploading, Development
+
+## Locally
+
+ - Build with `pio run`
+ - Upload with `pio run -t upload`
+ - Clean with `pio run -t clean`
+ - Verbose build with `pio run -v`
+ 
+## Dev Container
+
+ - Install `ms-vscode-remote.remote-containers` in your VSCode and follow the official [Installing Marlin (VSCode devcontainer)](https://marlinfw.org/docs/basics/install_devcontainer_vscode.html) documentation.
+
+ - Use "Dev Containers: Open Folder in Container..." command in VSCode.
+
+ - Use the nice PIO buttons on the bottom of VSCode to build, upload, etc.
+
 
 # Original Marlin README below
 
