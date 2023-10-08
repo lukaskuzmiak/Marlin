@@ -1,3 +1,33 @@
+# ChipShover Marlin
+
+This is a fork of the [original ChipSHOVER-Marlin repo](https://github.com/newaetech/ChipSHOVER-Marlin).
+
+The ChipShover changes has been merged into latest MarlinFirmware `2.1.x` (**not** `bugfix-2.1.x` as that is not meant for production). It is kept up to date with the upstream Marlin `2.1.x` branch from time to time.
+
+### Rough list of (more major) changes
+ - Inverted Z Axis - 0 is on the top and plunging down is in positive numbers
+ - Fix the MAX (far) endstops
+ - [Implement LM75BDP library; refactor temp reading using the library](https://github.com/lukaskuzmiak/Marlin/commit/d91c4bf274f243162a59102935fb6047b2c83985)
+ - [Automatic fan/temperature control](https://github.com/lukaskuzmiak/Marlin/commit/d11b93ae43e9752dd205e43d8e9df529a4f82c32)
+ - Bunch of refactoring to fit into Marlin 2.1 - makes it kind of difficult to compare it back original NewAE patches :/
+
+### Known issues
+ - Both buzzer and fan control are on the same `TC2` timer - changing one affects the other - **requires HW change**
+   - Fan PWM is on `PIO_PC25B_TIOA6` (`TC2_CHA6`)
+   - Beeper/Buzzer is on `PIO_PC26B_TIOB6` (`TC2_CHB6`)
+   - **It would be best to put these on native PWM lines if possible** (to not have to use timer to make PWM signals)
+
+### Planned improvements (not yet implemented)
+ - Diagonal jogging - If several moves (up+right, or down+left, etc.) are detected enqueue it as a single move command, that way we can go diagonally, not just one axis at the time
+ - Refactor the joystick (`CJ25-82010`) to have its own driver class
+ - Refactor the ChipShover TFT display
+   - It needs to remember the current text size and implement clearLine on top of it
+   - Ideally it can be a child class of the actual display class?
+   - Put it in e.g., Marlin/src/feature/chipshover/cs_tft.[cpp,h]
+ - The X/Y/Z positioners feature an optical endstop as well for more precise homing - let's see if it can be utilized
+
+# Original Marlin README below
+
 <p align="center"><img src="buildroot/share/pixmaps/logo/marlin-outrun-nf-500.png" height="250" alt="MarlinFirmware's logo" /></p>
 
 <h1 align="center">Marlin 3D Printer Firmware</h1>
