@@ -24,10 +24,10 @@
  *----------------------------------------------------------------------------*/
 
 /** Frequency of the board main oscillator */
-#define VARIANT_MAINOSC		12000000
+#define VARIANT_MAINOSC   12000000
 
 /** Master clock frequency */
-#define VARIANT_MCK			84000000
+#define VARIANT_MCK     84000000
 
 /*----------------------------------------------------------------------------
  *        Headers
@@ -123,13 +123,13 @@ extern "C"{
 #define BOARD_SPI_DEFAULT_SS BOARD_SPI_SS3
 
 #define BOARD_PIN_TO_SPI_PIN(x) \
-	(x==BOARD_SPI_SS0 ? PIN_SPI_SS0 : \
-	(x==BOARD_SPI_SS1 ? PIN_SPI_SS1 : \
-	(x==BOARD_SPI_SS2 ? PIN_SPI_SS2 : PIN_SPI_SS3 )))
+  (x==BOARD_SPI_SS0 ? PIN_SPI_SS0 : \
+  (x==BOARD_SPI_SS1 ? PIN_SPI_SS1 : \
+  (x==BOARD_SPI_SS2 ? PIN_SPI_SS2 : PIN_SPI_SS3 )))
 #define BOARD_PIN_TO_SPI_CHANNEL(x) \
-	(x==BOARD_SPI_SS0 ? 0 : \
-	(x==BOARD_SPI_SS1 ? 1 : \
-	(x==BOARD_SPI_SS2 ? 2 : 3)))
+  (x==BOARD_SPI_SS0 ? 0 : \
+  (x==BOARD_SPI_SS1 ? 1 : \
+  (x==BOARD_SPI_SS2 ? 2 : 3)))
 
 static const uint8_t SS   = BOARD_SPI_SS0;
 static const uint8_t SS1  = BOARD_SPI_SS1;
@@ -213,7 +213,7 @@ static const uint8_t DAC0 = 66;
 static const uint8_t DAC1 = 67;
 static const uint8_t CANRX = 68;
 static const uint8_t CANTX = 69;
-#define ADC_RESOLUTION		12
+#define ADC_RESOLUTION    12
 
 /*
  * Complementary CAN pins
@@ -230,25 +230,25 @@ static const uint8_t CAN1TX = 89;
 /*
  * DACC
  */
-#define DACC_INTERFACE		DACC
-#define DACC_INTERFACE_ID	ID_DACC
-#define DACC_RESOLUTION		12
+#define DACC_INTERFACE    DACC
+#define DACC_INTERFACE_ID ID_DACC
+#define DACC_RESOLUTION   12
 #define DACC_ISR_HANDLER    DACC_Handler
 #define DACC_ISR_ID         DACC_IRQn
 
 /*
  * PWM
  */
-#define PWM_INTERFACE		PWM
-#define PWM_INTERFACE_ID	ID_PWM
+#define PWM_INTERFACE   PWM
+#define PWM_INTERFACE_ID  ID_PWM
 #ifdef DUE_CHIPSHOVER
-#define PWM_FREQUENCY		25000
+#define PWM_FREQUENCY   25000
 #else
-#define PWM_FREQUENCY		31000
+#define PWM_FREQUENCY   31000
 #endif
-#define PWM_MAX_DUTY_CYCLE	255
-#define PWM_MIN_DUTY_CYCLE	0
-#define PWM_RESOLUTION		8
+#define PWM_MAX_DUTY_CYCLE  255
+#define PWM_MIN_DUTY_CYCLE  0
+#define PWM_RESOLUTION    8
 
 /*
  * TC
@@ -267,7 +267,7 @@ static const uint8_t CAN1TX = 89;
 #endif
 #define TC_MAX_DUTY_CYCLE   255
 #define TC_MIN_DUTY_CYCLE   0
-#define TC_RESOLUTION		8
+#define TC_RESOLUTION   8
 
 #ifdef __cplusplus
 }
@@ -312,4 +312,3 @@ extern USARTClass Serial3;
 #define SERIAL_PORT_HARDWARE3       Serial3
 
 #endif /* _VARIANT_ARDUINO_DUE_X_ */
-
